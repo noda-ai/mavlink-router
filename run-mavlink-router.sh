@@ -1,10 +1,18 @@
 #!/bin/bash
 # Script to run the mavlink-router Docker container with dynamic GCS_PORT based on MAV_SYS_ID
 
-# Check if GCS_IP is set
-if [ -z "$GCS_IP" ]; then
-  echo "Error: GCS_IP environment variable is not set"
-  echo "Please set it before running this script: export GCS_IP=<ip_address>"
+# Check if command-line argument was provided first
+if [ $# -ge 1 ]; then
+  GCS_IP="$1"
+  echo "Using GCS_IP=$GCS_IP from command-line argument"
+# If not, check if environment variable is set
+elif [ -n "$GCS_IP" ]; then
+  echo "Using GCS_IP=$GCS_IP from environment variable"
+# If neither, show error and exit
+else
+  echo "Error: GCS_IP not provided"
+  echo "Please provide it as a command-line argument: $0 <ip_address>"
+  echo "Or set it as an environment variable: export GCS_IP=<ip_address>"
   exit 1
 fi
 
