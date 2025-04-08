@@ -26,9 +26,10 @@ MAV_SYS_ID=$(px4-param show MAV_SYS_ID 2>/dev/null | grep MAV_SYS_ID | awk -F': 
 GCS_PORT=$((BASE_PORT + MAV_SYS_ID))
 echo "Using GCS_IP=$GCS_IP, MAV_SYS_ID=$MAV_SYS_ID, GCS_PORT=$GCS_PORT"
 
-# Run the container
+# Run the container with explicit command
 docker run --rm -it \
   --network=host \
   -e GCS_IP="$GCS_IP" \
   -e GCS_PORT="$GCS_PORT" \
-  noda-mavlink-router
+  noda-mavlink-router \
+  /mavlink-router/build/src/mavlink-routerd -e "$GCS_IP:$GCS_PORT" 0.0.0.0:14551
