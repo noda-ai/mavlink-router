@@ -55,6 +55,10 @@ fi
 GCS_PORT=$((BASE_PORT + MAV_SYS_ID))
 echo "Using GCS_IP=$GCS_IP, MAV_SYS_ID=$MAV_SYS_ID, GCS_PORT=$GCS_PORT"
 
+# Ensure
+echo "Ensure voxl-mavlink-server is running"
+systemctl restart voxl-mavlink-server
+
 # Run the container with explicit command
 echo "Running mavlink-routerd with: GCS endpoint $GCS_IP:$GCS_PORT, local endpoint 0.0.0.0:$VOXL_VISION_HUB_PORT"
 docker run --rm -it \
