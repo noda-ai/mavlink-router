@@ -18,8 +18,8 @@ git clone git@github.com:noda-ai/mavlink-router.git
 
 # (optionally check out specific tag)
 
-# Copy whole directory to VOXL (e.g. 10.8.0.7)
-sshpass -e scp -r ./mavlink-router root@10.8.0.7:/home/root/
+# Copy whole directory to VOXL (e.g. 10.8.0.6)
+sshpass -e scp -r ./mavlink-router root@10.8.0.6:/home/root/
 ```
 
 Repeat the last command for each VOXL you want to deploy.
@@ -38,31 +38,6 @@ git submodule update --init --recursive
 # Build and tag image
 docker build . -t noda-mavlink-router
 ```
-
-## Run Automatically on Boot
-
-SSH into the VOXL, then run the following:
-
-```sh
-# Set GCS_IP environment variable on every boot
-mkdir -p ~/.profile.d
-echo "export GCS_IP=10.8.0.2" > ~/.profile.d/noda.sh
-chmod +x ~/.profile.d/noda.sh
-```
-
-Then edit the VOXL's crontab:
-
-```sh
-crontab -e
-```
-
-Add the following line:
-
-```sh
-@reboot /home/root/mavlink-router/run-mavlink-router.sh
-```
-
-Now the VOXL should start up the `mavlink-router` container on every boot pointed to the ground station at `10.8.0.2`.
 
 ## Run Manually
 

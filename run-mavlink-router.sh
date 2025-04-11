@@ -58,12 +58,17 @@ echo "Using GCS_IP=$GCS_IP, MAV_SYS_ID=$MAV_SYS_ID, GCS_PORT=$GCS_PORT"
 # Ensure
 echo "Ensure voxl-mavlink-server is running"
 systemctl restart voxl-mavlink-server
+systemctl status voxl-mavlink-server
 
 # Run the container with explicit command
-echo "Running mavlink-routerd with: GCS endpoint $GCS_IP:$GCS_PORT, local endpoint 0.0.0.0:$VOXL_VISION_HUB_PORT"
-docker run --rm -it \
+echo "Starting mavlink-router container using the following configurations:"
+echo ""
+echo "  Ground station: $GCS_IP:$GCS_PORT"
+echo "  Onboard port: $VOXL_VISION_HUB_PORT"
+echo ""
+
+docker run --rm -d \
   --network=host \
-  -e GCS_IP="$GCS_IP" \
-  -e GCS_PORT="$GCS_PORT" \
+  --name=noda-mavlink-router \
   noda-mavlink-router \
   /mavlink-router/build/src/mavlink-routerd -e "$GCS_IP:$GCS_PORT" 0.0.0.0:$VOXL_VISION_HUB_PORT
