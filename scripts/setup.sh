@@ -17,6 +17,6 @@ echo "Setting up mavlink-router to start at boot with GCS IP $1..."
 
 # Get the git project root directory
 PROJECT_ROOT="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
-( crontab -l | grep -v -F "mavlink-router" ; echo "@reboot $PROJECT_ROOT/scripts/run-mavlink-router.sh $1" ) | crontab -
+( crontab -l | grep -v -F "mavlink-router" ; echo "@reboot $PROJECT_ROOT/scripts/run-mavlink-router.sh $1 >> /tmp/cron_mavlink_router.log 2>&1" ) | crontab -
 
 echo "Successfully configured cron job!"
