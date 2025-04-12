@@ -11,6 +11,19 @@ else
   exit 1
 fi
 
+# Wait for Docker daemon
+max_attempts=30
+attempt=1
+while ! docker info >/dev/null 2>&1; do
+    if [ $attempt -gt $max_attempts ]; then
+        echo "Docker service not available after $max_attempts attempts. Exiting."
+        exit 1
+    fi
+    echo "Waiting for Docker service to be available..."
+    sleep 1
+    attempt=$((attempt+1))
+done
+
 # Stop existing container if running
 if [ -n "$(docker ps -q -f name=noda-mavlink-router)" ]; then
   docker stop noda-mavlink-router
@@ -19,8 +32,26 @@ fi
 # Initial MAVLink port (for MAV_SYS_ID = 1)
 BASE_PORT=14540
 
-# Get MAV_SYS_ID from px4-param
-MAV_SYS_ID=$(px4-param show MAV_SYS_ID 2>/dev/null | grep MAV_SYS_ID | awk -F': ' '{print $2}' || echo "1")
+# Function to get MAV_SYS_ID with a fallback of 1
+get_mav_sys_id() {
+    local value
+    value=$(px4-param show MAV_SYS_ID 2>/dev/null | grep MAV_SYS_ID | awk -F': ' '{print $2}')
+    echo "${value}"  # Return value or 1 if empty
+}
+
+# Wait for px4-param to return a valid MAV_SYS_ID
+max_attempts=30  # Maximum number of attempts
+attempt=1
+
+echo "Waiting for px4-param to become available..."
+MAV_SYS_ID=$(get_mav_sys_id)
+
+# Wait for px4-param to return a valid MAV_SYS_ID
+while [ -z "$MAV_SYS_ID" ] && [ $attempt -lt $max_attempts ]; do
+    sleep 1
+    MAV_SYS_ID=$(get_mav_sys_id)
+    attempt=$((attempt+1))
+done
 
 # Get localhost MAVSDK UDP port from voxl-vision-hub.conf
 CONFIG_FILE="/etc/modalai/voxl-vision-hub.conf"
