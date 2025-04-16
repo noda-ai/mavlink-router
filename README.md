@@ -26,27 +26,26 @@ sshpass -e scp -r ./mavlink-router root@10.8.0.7:/home/root/
 
 Repeat the last command for each VOXL you want to deploy.
 
-### On VOXL
+## Configure Ground Control Station
+
+### Change Default GCS on Boot
 
 SSH into the VOXL, then run the following:
 
 ```sh
-# Navigate to mavlink-router
-cd ~/mavlink-router
-
-# Set up mavlink-router and configure auto-start (via cron) with a preset ground station IP (e.g. 10.8.0.2)
-./scripts/setup.sh 10.8.0.2
+# Build and configure mavlink-router to start at boot with a preset ground station IP (e.g. 10.8.0.2)
+/home/root/mavlink-router/scripts/setup.sh 10.8.0.2
 ```
 
-## Run Manually
+### Change GCS Temporarily
 
-SSH into the VOXL, then run the following:
+If you want to temporarily set a new GCS IP, you can run the following (this will reset to default GCS on reboot):
 
 ```sh
 # Start mavlink-router
 # - takes in one argument: ground station IP address
 # - automatically sets port based on MAV_SYS_ID (check with `px4-param show MAV_SYS_ID`)
-./scripts/run-mavlink-router.sh 10.8.0.2
+/home/root/mavlink-router/scripts/run-mavlink-router.sh 10.8.0.3
 ```
 
 This will stop any running `mavlink-router` container and start a new one.
