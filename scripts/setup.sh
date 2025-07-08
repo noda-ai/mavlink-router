@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change directory to mavlink-router project root
+cd /home/root/mavlink-router
+
 # Submodule update required for Docker build
 git submodule update --init --recursive
 
